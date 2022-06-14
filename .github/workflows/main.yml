@@ -99,13 +99,24 @@ jobs:
     - name: Configure (CMake)
       if: "matrix.platform.cmake"
       run: |
-        cmake -B build-cmake \
+        set -- \
           -DBUILD_SHARED_LIBS=ON \
           -DSDL2TTF_HARFBUZZ=ON \
           -DSDL2TTF_SAMPLES=ON \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
           -DCMAKE_BUILD_TYPE=Release \
           -DCMAKE_INSTALL_PREFIX=prefix_cmake \
+          ${NULL+}
+
+        if [ "${{ matrix.platform.msystem }}" = "" ]; then
+          # mingw-w64-*-SDL2 doesn't have SDL_test, and the macOS CMake
+          # build can't find it (see #260), so we only enable build-time
+          # tests for Linux at the moment.
+          set -- "$@" -DSDL2TTF_TESTS=ON
+        fi
+
+        cmake -B build-cmake \
+          "$@" \
           ${{ matrix.platform.cmake }}
     - name: Build (CMake)
       if: "matrix.platform.cmake"

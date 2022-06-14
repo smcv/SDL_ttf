@@ -51,6 +51,8 @@ option(SDL2TTF_SAMPLES "Build the SDL2_ttf sample program(s)" ON)
 option(SDL2TTF_INSTALL "Enable SDL2_ttf install target" ON)
 option(SDL2TTF_VENDORED "Use vendored third-party libraries" ${vendored_default})
 
+option(SDL2TTF_TESTS "Build unit tests?" OFF)
+
 # For style consistency, create a SDL2TTF_FREETYPE CMake variable. This variable is NOT configurable.
 set(SDL2TTF_FREETYPE ON)
 set(SDL2TTF_FREETYPE_VENDORED "${SDL2TTF_VENDORED}")
@@ -404,3 +406,7 @@ set_target_properties(SDL2::ttf PROPERTIES
     DEPRECATION "Use SDL2_ttf::SDL2_ttf or SDL2_ttf::SDL2_ttf-static instead"
 )
 
+if(SDL2TTF_TESTS)
+    enable_testing()
+    add_subdirectory(test)
+endif()
